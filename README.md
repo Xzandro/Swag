@@ -1,5 +1,7 @@
 # Swag
 
+Swag is a guild war tool to track and see your guild‘s offense & defense fights for each week. See who are the most solid performers on GWO and who‘s the boss on GWD.
+
 The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
 
 ## Installation
