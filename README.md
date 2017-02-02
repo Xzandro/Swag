@@ -8,6 +8,7 @@ The framework source code can be found here: [cakephp/cakephp](https://github.co
 
 1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
 2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
+3. Import the swag_db database structure (mySQL)
 
 If Composer is installed globally, run
 ```bash
