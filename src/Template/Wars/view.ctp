@@ -1,3 +1,6 @@
+<?php
+$this->assign('title', 'Swag - ' . $attacker . ' (Attack) vs. ' . $defender .' (Defense)');
+?>
 <div id="container-data" class="container" data-action="getmatchsingle">
     <div class="table-metadata">
         <p class="table-metadata-name"></p>

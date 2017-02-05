@@ -1,3 +1,6 @@
+<?php
+$this->assign('title', 'Swag - ' . $guildname .' (Weekly Stats)');
+?>
 <div id="container-data" class="container" data-action="getmatchweek">
     <div class="table-metadata">
         <p class="table-metadata-name"></p>
