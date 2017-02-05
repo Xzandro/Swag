@@ -1,9 +1,6 @@
-# CakePHP Application Skeleton
+# Swag
 
-[![Build Status](https://img.shields.io/travis/cakephp/app/master.svg?style=flat-square)](https://travis-ci.org/cakephp/app)
-[![License](https://img.shields.io/packagist/l/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
-
-A skeleton for creating applications with [CakePHP](http://cakephp.org) 3.x.
+Swag is a guild war tool to track and see your guild‘s offense & defense fights for each week. See who are the most solid performers on GWO and who‘s the boss on GWD.
 
 The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
 
@@ -11,6 +8,7 @@ The framework source code can be found here: [cakephp/cakephp](https://github.co
 
 1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
 2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
+3. Import the swag_db database structure (mySQL)
 
 If Composer is installed globally, run
 ```bash
