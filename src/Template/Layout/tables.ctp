@@ -14,6 +14,7 @@
 
     <?= $this->Html->css('bootstrap.min.css') ?>
     <?= $this->Html->css('jquery.dataTables.min.css') ?>
+    <?= $this->Html->css('select2.min.css') ?>
     <?= $this->Html->css('style.css') ?>
 
     <?= $this->Html->script('jquery-3.1.1.min.js') ?>
@@ -21,6 +22,7 @@
     <?= $this->Html->script('jquery.dataTables.min.js') ?>
     <?= $this->Html->script('moment.js') ?>
     <?= $this->Html->script('tables.js') ?>
+    <?= $this->Html->script('select2.min.js') ?>
     <?= $this->Html->script('main.js') ?>
 
     <?= $this->fetch('meta') ?>

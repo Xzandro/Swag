@@ -158,6 +158,7 @@ $(function() {
         }
     });
 
+    $('#settings-guild').select2();
 
     $('#settings-region').on('change', function (e) {
         exeAjax({
