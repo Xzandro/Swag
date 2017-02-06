@@ -171,6 +171,7 @@ $(function() {
         if(!$('#settings-mode').val())
             return;
         $('.spinner').fadeIn();
+        $('.container-matches').empty();
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),
             params: {fights: 1, stats: 1, type: getModus()},
