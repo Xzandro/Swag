@@ -31,11 +31,11 @@ function handleData(data, args) {
             $('#settings-region').html(options_region).val(localStorage.getItem('region') || 0).change();
             break;
         case 'setguilds':
-            let options_guild = '<option value="0">Select guild</option>';
+            let options_guild = '';
             data['guilds'].forEach(guild => {
                 options_guild += `<option value="${guild.guild_id}">${guild.name}</option>`;
             });
-            $('#settings-guild').html(options_guild).val(localStorage.getItem('guild') || 0).change();
+            $('#settings-guild').html(options_guild).val(localStorage.getItem('guild')|| 0).change();
             break;
         case 'getmatches':
             prepareMatches(data);
@@ -81,6 +81,7 @@ function initMatches() {
     let week = $('#settings-week').val();
     if(!match_data[week]) {
         $('.container-matches').html(structure);
+        $('.spinner').hide();
         init = true;
         return;
     }
@@ -158,7 +159,9 @@ $(function() {
         }
     });
 
-    $('#settings-guild').select2();
+    $('#settings-guild').select2({
+        placeholder: 'Select guild'
+    });
 
     $('#settings-region').on('change', function (e) {
         exeAjax({
@@ -170,7 +173,10 @@ $(function() {
     $('#settings-guild').on('change', function (e) {
         if(!$('#settings-mode').val())
             return;
-        $('.spinner').fadeIn();
+
+        if($(this).val() > 0)
+            $('.spinner').fadeIn();
+
         $('.container-matches').empty();
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),

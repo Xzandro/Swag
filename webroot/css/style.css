@@ -3,10 +3,6 @@ body {
     background-color: #E7E7E7;
     font-family: 'Roboto Slab';
 }
-/*.container .container {*/
-    /*padding-left: 0;*/
-    /*padding-right: 0;*/
-/*}*/
 a:focus, a:hover {
     text-decoration: none;
 }
@@ -83,6 +79,9 @@ header h1 {
 .select2-container .select2-selection--single {
     padding: 2px 9px;
     height: 34px;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #555555;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #555555;
@@ -357,7 +356,7 @@ table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.
 }
 
 .spinner > div {
-    background-color: #333;
+    background-color: #7D7D7D;
     height: 100%;
     width: 6px;
     display: inline-block;
