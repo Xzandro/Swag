@@ -123,7 +123,7 @@ function initMatches() {
         </div>`
 
     });
-
+    $('.spinner').hide();
     $('.container-matches').html(structure);
     init = true;
 }
@@ -170,6 +170,7 @@ $(function() {
     $('#settings-guild').on('change', function (e) {
         if(!$('#settings-mode').val())
             return;
+        $('.spinner').fadeIn();
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),
             params: {fights: 1, stats: 1, type: getModus()},
@@ -180,6 +181,8 @@ $(function() {
     $('#settings-mode').on('change', function (e) {
         if(!init)
             return;
+        $('.spinner').fadeIn();
+        $('.container-matches').empty();
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),
             params: {fights: 1, stats: 1, type: getModus()},

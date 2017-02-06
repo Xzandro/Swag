@@ -33,7 +33,7 @@ class WarsController extends AppController
         $regionToTimezone = array_flip($timezoneToRegion);
         $timezone = $regionToTimezone[$matches[0]['guild']['region_id']];
         $matches[0]['last_fight'] = Time::parse($matches[0]['last_fight'])->i18nFormat('yyyy-MM-dd HH:mm:ss', $timezone);
-        // get attacker and defenser name
+        // get attacker and defender name
         if($matches[0]['log_type'] === 1) {
             $attacker = $matches[0]['guild']['name'];
             $defender = $matches[0]['guild_opp']['name'];
