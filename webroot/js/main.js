@@ -39,7 +39,10 @@ function handleData(data, args) {
             break;
         case 'getmatches':
             prepareMatches(data);
-            initMatches();
+            //initMatches();
+            break;
+        case 'initmatches':
+            initMatches(data);
             break;
         case 'getmatchsingle':
             prepareMatchTableDataSingle(data);
@@ -60,8 +63,7 @@ function prepareMatches(data) {
             match_data[object_key] = {
                 start: moment(match.last_fight).startOf('isoweek').format('D.M'),
                 end: moment(match.last_fight).endOf('isoweek').format('D.M.Y'),
-                db_start: moment(match.last_fight).startOf('isoweek').format('Y-MM-DD'),
-                db_end: moment(match.last_fight).endOf('isoweek').format('Y-MM-DD'),
+                year: year,
                 week: week,
                 items: []
             };
@@ -71,22 +73,17 @@ function prepareMatches(data) {
     let match_keys = Object.keys(match_data);
     let options_week = (match_keys.length === 0) ? '<option value="0">No data.</option>' : '';
     match_keys.forEach(week => {
-        options_week += `<option value="${week}">Week ${match_data[week]['week']}, ${match_data[week]['start']} - ${match_data[week]['end']}</option>`;
+        options_week += `<option value="${match_data[week]['year']}-${match_data[week]['week']}">Week ${match_data[week]['week']}, ${match_data[week]['start']} - ${match_data[week]['end']}</option>`;
     });
     $('#settings-week').html(options_week).change();
 }
 
-function initMatches() {
+function initMatches(data) {
     let structure = '';
-    let week = $('#settings-week').val();
-    if(!match_data[week]) {
-        $('.container-matches').html(structure);
-        $('.spinner').hide();
-        init = true;
-        return;
-    }
 
-    match_data[week].items.forEach((match) => {
+    $('#weekly-stats').attr('href', '/wars/week/' + $('#settings-guild').val() + '?week=' + localStorage.getItem('week') + '&year=' + localStorage.getItem('year'));
+
+    data.matches.forEach((match) => {
         let opp_object_string = (match['guild_id'] == localStorage.getItem('guild')) ? 'guild_opp' : 'guild';
         let opponent = match[opp_object_string];
 
@@ -174,13 +171,9 @@ $(function() {
         if(!$('#settings-mode').val())
             return;
 
-        if($(this).val() > 0)
-            $('.spinner').fadeIn();
-
-        $('.container-matches').empty();
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),
-            params: {fights: 1, stats: 1, type: getModus()},
+            params: {type: getModus()},
             action: 'getmatches'
         });
     });
@@ -188,19 +181,30 @@ $(function() {
     $('#settings-mode').on('change', function (e) {
         if(!init)
             return;
+
         $('.spinner').fadeIn();
         $('.container-matches').empty();
+
         exeAjax({
             url: '/api/matches/' + (localStorage.getItem('guild') || 0),
-            params: {fights: 1, stats: 1, type: getModus()},
+            params: {type: getModus()},
             action: 'getmatches'
         });
     });
 
     $('#settings-week').on('change', function (e) {
-        if(match_data[$(this).val()])
-            $('#weekly-stats').attr('href', '/wars/week/' + $('#settings-guild').val() + '?start=' + match_data[$(this).val()]['db_start'] + '&end=' + match_data[$(this).val()]['db_end']);
-        initMatches();
+        let data = $(this).val().split('-');
+        localStorage.setItem('year', data[0]);
+        localStorage.setItem('week', data[1]);
+
+        $('.spinner').fadeIn();
+        $('.container-matches').empty();
+
+        exeAjax({
+            url: '/api/matches/' + (localStorage.getItem('guild') || 0),
+            params: {week: data[1], year: data[0], fights: 1, stats: 1, type: getModus()},
+            action: 'initmatches'
+        });
     });
 
     $('[data-toggle="tooltip"]').tooltip();

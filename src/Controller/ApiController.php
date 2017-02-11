@@ -50,31 +50,41 @@ class ApiController extends AppController
         if($this->request->query('fights')) {
             $contain = ['Guild', 'GuildOpp', 'Fights'];
         }
-        $conditions = [];
-        if($this->request->query('start_date')) {
-            $conditions = ['Matches.last_fight >' => $this->request->query('start_date')];
+        $limitWeek = [];
+
+        $year = ($this->request->query('year')) ? $this->request->query('year') : date('Y');
+        $week = $this->request->query('week');
+        if($year && $week) {
+            $dto = new Time();
+            $start = $dto->setISODate($year, $week)->format('Y-m-d');
+            $end = $dto->modify('+6 days')->format('Y-m-d');
+            $limitWeek = ['Matches.last_fight >' => $start, 'Matches.last_fight <' => $end];
         }
+
         switch ($this->request->query('type')) {
             case 'attack':
+                $where = array_merge(['Matches.guild_id' => $id, 'Matches.log_type' => 1], $limitWeek);
+                $orWhere = array_merge(['Matches.opp_guild_id' => $id, 'Matches.log_type' => 2], $limitWeek);
                 $query = $this->Matches->find('all', [
                     'contain' => $contain,
-                    'conditions' => $conditions,
                     'order' => ['Matches.match_id' => 'DESC']
-                ])->where(['Matches.guild_id' => $id, 'Matches.log_type' => 1])->orWhere(['Matches.opp_guild_id' => $id, 'Matches.log_type' => 2]);
+                ])->where($where)->orWhere($orWhere);
                 break;
             case 'defense':
+                $where = array_merge(['Matches.guild_id' => $id, 'Matches.log_type' => 2], $limitWeek);
+                $orWhere = array_merge(['Matches.opp_guild_id' => $id, 'Matches.log_type' => 1], $limitWeek);
                 $query = $this->Matches->find('all', [
                     'contain' => $contain,
-                    'conditions' => $conditions,
                     'order' => ['Matches.match_id' => 'DESC']
-                ])->where(['Matches.guild_id' => $id, 'Matches.log_type' => 2])->orWhere(['Matches.opp_guild_id' => $id, 'Matches.log_type' => 1]);
+                ])->where($where)->orWhere($orWhere);
                 break;
             default:
+                $where = array_merge(['Matches.guild_id' => $id], $limitWeek);
+                $orWhere = array_merge(['Matches.opp_guild_id' => $id], $limitWeek);
                 $query = $this->Matches->find('all', [
                     'contain' => $contain,
-                    'conditions' => $conditions,
                     'order' => ['Matches.match_id' => 'DESC']
-                ])->where(['Matches.guild_id' => $id])->orWhere(['Matches.opp_guild_id' => $id]);
+                ])->where($where)->orWhere($orWhere);
         }
 
         $matches = $query->toArray();

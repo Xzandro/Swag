@@ -48,8 +48,14 @@ class WarsController extends AppController
     public function week($id = 0)
     {
         $this->loadModel('Matches');
-        $start = $this->request->query('start');
-        $end = $this->request->query('end');
+
+        $year = ($this->request->query('year')) ? $this->request->query('year') : date('Y');
+        $week = $this->request->query('week') ? $this->request->query('week') : date('W');
+
+        $dto = new Time();
+        $start = $dto->setISODate($year, $week)->format('Y-m-d');
+        $end = $dto->modify('+6 days')->format('Y-m-d');
+
         $contain = ['Guild', 'GuildOpp', 'Fights'];
         $query = $this->Matches->find('all', [
             'contain' => $contain,
