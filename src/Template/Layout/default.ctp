@@ -63,7 +63,7 @@
                         </div>
                         <div class="form-group">
                             <label for="settings-week">Pick a GW week!</label>
-                            <select id="settings-week" class="form-control settings" data-setting="week">
+                            <select id="settings-week" class="form-control">
                             </select>
                         </div>
                     </div>

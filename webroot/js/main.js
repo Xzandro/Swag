@@ -20,8 +20,6 @@ function exeAjax(args) {
 }
 
 function handleData(data, args) {
-    //console.log(data);
-
     switch(args.action) {
         case 'setregions':
             let options_region = '<option value="0">Select region</option>';
@@ -39,7 +37,6 @@ function handleData(data, args) {
             break;
         case 'getmatches':
             prepareMatches(data);
-            //initMatches();
             break;
         case 'initmatches':
             initMatches(data);
