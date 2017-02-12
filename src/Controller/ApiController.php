@@ -46,19 +46,23 @@ class ApiController extends AppController
     public function matches($id = 0)
     {
         $this->loadModel('Matches');
-        $contain = ['Guild', 'GuildOpp'];
-        if($this->request->query('fights')) {
-            $contain = ['Guild', 'GuildOpp', 'Fights'];
-        }
+
         $limitWeek = [];
 
         $year = ($this->request->query('year')) ? $this->request->query('year') : date('Y');
         $week = $this->request->query('week');
         if($year && $week) {
             $dto = new Time();
-            $start = $dto->setISODate($year, $week)->format('Y-m-d');
-            $end = $dto->modify('+6 days')->format('Y-m-d');
-            $limitWeek = ['Matches.last_fight >' => $start, 'Matches.last_fight <' => $end];
+            $this->battle_start = $dto->setISODate($year, $week)->format('Y-m-d');
+            $this->battle_end = $dto->modify('+6 days')->format('Y-m-d');
+            $limitWeek = ['Matches.last_fight >' => $this->battle_start, 'Matches.last_fight <' => $this->battle_end];
+        }
+
+        $contain = ['Guild', 'GuildOpp'];
+        if($this->request->query('fights')) {
+            $contain = ['Guild', 'GuildOpp', 'Fights' => function ($q) {
+                return $q->where(['Fights.battle_end >' => $this->battle_start, 'Fights.battle_end <' => $this->battle_end]);
+            }];
         }
 
         switch ($this->request->query('type')) {

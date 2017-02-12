@@ -53,15 +53,17 @@ class WarsController extends AppController
         $week = $this->request->query('week') ? $this->request->query('week') : date('W');
 
         $dto = new Time();
-        $start = $dto->setISODate($year, $week)->format('Y-m-d');
-        $end = $dto->modify('+6 days')->format('Y-m-d');
+        $this->battle_start = $dto->setISODate($year, $week)->format('Y-m-d');
+        $this->battle_end = $dto->modify('+6 days')->format('Y-m-d');
 
-        $contain = ['Guild', 'GuildOpp', 'Fights'];
+        $contain = ['Guild', 'GuildOpp', 'Fights' => function ($q) {
+            return $q->where(['Fights.battle_end >' => $this->battle_start, 'Fights.battle_end <' => $this->battle_end]);
+        }];
         $query = $this->Matches->find('all', [
             'contain' => $contain,
-            'conditions' => ['Matches.last_fight >' => $start, 'Matches.last_fight <' => $end],
+            'conditions' => ['Matches.last_fight >' => $this->battle_start, 'Matches.last_fight <' => $this->battle_end],
             'order' => ['Matches.match_id' => 'DESC']
-        ])->where(['Matches.guild_id' => $id])->orWhere(['Matches.opp_guild_id' => $id, 'Matches.last_fight >' => $start, 'Matches.last_fight <' => $end]);
+        ])->where(['Matches.guild_id' => $id])->orWhere(['Matches.opp_guild_id' => $id, 'Matches.last_fight >' => $this->battle_start, 'Matches.last_fight <' => $this->battle_end]);
         $matches = $query->toArray();
 
         $timezoneToRegion = Configure::read('TimezoneToRegion');
