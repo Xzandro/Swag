@@ -94,7 +94,7 @@
                     <h3>What is this?</h3>
                     <p>This is a guild war tool to track and see your guild‘s offense & defense fights for each week. See who are the most solid performers on GWO and who‘s the boss on GWD.</p>
                     <h3>How do I use this?</h3>
-                    <p>It‘s all based on Summoners War Exporter (SWEX). Have SWProxy running and <strong>tap on the general „Attack“ and „Defense“ tab</strong>. All data will be uploaded to this tool automatically! Some data of those tabs might get lost if you don‘t log regularly (best is doing it every day). If you want to log every Saturday for example, you to <strong>tap on the Offense and Defense Logs of each member</strong>.</p>
+                    <p>It‘s all based on Summoners War Exporter (SWEX). Have SWEX running and <strong>tap on the general „Attack“ and „Defense“ tab</strong>. All data will be uploaded to this tool automatically! Some data of those tabs might get lost if you don‘t log regularly (best is doing it every day). If you want to log every Saturday for example, you to <strong>tap on the Offense and Defense Logs of each member</strong>.</p>
                     <p><strong>Mandatory:</strong></p>
                     Download the latest Summoners War Exporter from <a href="https://github.com/Xzandro/sw-exporter/releases/latest" target="_blank">here</a>.<br />
                     <p>Thanks, that‘s it!</p>
