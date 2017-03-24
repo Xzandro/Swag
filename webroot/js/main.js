@@ -1,3 +1,4 @@
+let rawData = [];
 let match_data = {};
 
 let init = false;
@@ -42,10 +43,12 @@ function handleData(data, args) {
             initMatches(data);
             break;
         case 'getmatchsingle':
-            prepareMatchTableDataSingle(data);
+            rawData = data;
+            prepareMatchTableDataSingle();
             break;
         case 'getmatchweek':
-            prepareMatchTableDataWeek(data);
+            rawData = data;
+            prepareMatchTableDataWeek(true);
             break;
     }
 }

@@ -1,6 +1,10 @@
 const IdToResult = {1: '_wins', 2: '_loses', 3: '_draws'};
 const IdToResultOpp = {1: '_loses', 2: '_wins', 3: '_draws'};
 
+let excludedGuilds = { attack: {}, defense: {} };
+
+let table;
+
 function initMatchesTable(data) {
     $('.table-metadata-name').text(data.name);
     $('.table-metadata-mode').text(`${data.mode} (${data.date})`);
@@ -70,7 +74,8 @@ function initMatchesTableWeek(data) {
     });
 }
 
-function prepareMatchTableDataSingle(data) {
+function prepareMatchTableDataSingle() {
+    let data = JSON.parse(JSON.stringify(rawData));
     let temp = {};
     let tableData = {items: []};
     let guild_id = Number(localStorage.getItem('guild')) || 0;
@@ -111,10 +116,11 @@ function prepareMatchTableDataSingle(data) {
         temp[wizard]['round2_winrate'] = Math.round(temp[wizard]['round2_wins'] / (temp[wizard]['round_count'] / 2) * 100) || 0;
         tableData.items.push(temp[wizard]);
     });
-    initMatchesTable(tableData);
+    table = initMatchesTable(tableData);
 }
 
-function prepareMatchTableDataWeek(data) {
+function prepareMatchTableDataWeek(initTable) {
+    let data = JSON.parse(JSON.stringify(rawData));
     let temp = {};
     let tableData = {items: []};
     let guild_id = Number(localStorage.getItem('guild')) || 0;
@@ -124,28 +130,71 @@ function prepareMatchTableDataWeek(data) {
     tableData.date = `${moment(date).startOf('isoweek').format('D.M.')} - ${moment(date).endOf('isoweek').format('D.M.Y')}`;
 
     let attendanceMax = 0;
+    let excludeData = { attack: {}, defense: {} };
 
     data['matches'].forEach(match => {
         let mode = getMatchModeByGuild(match, guild_id);
-        if(mode === 'attack')
-            attendanceMax += 6;
-
-        match.fights.forEach(fight => {
-            let wizard_prefix = (fight['guild_id'] == guild_id) ? '' : 'opp_';
-            if(!temp[fight[wizard_prefix + 'wizard_id']])
-                temp[fight[wizard_prefix + 'wizard_id']] = {wizard_id: fight[wizard_prefix + 'wizard_id'], wizard_name: fight[wizard_prefix + 'wizard_name'],
-                    attack: {round_count: 0, win_count: 0, lose_count: 0, draw_count: 0, win_rate: 0, round1_wins: 0, round1_loses: 0, round1_draws: 0, round1_winrate: 0, round2_wins: 0, round2_loses: 0, round2_draws: 0, round2_winrate: 0},
-                    defense: {round_count: 0, win_count: 0, lose_count: 0, draw_count: 0, win_rate: 0, round1_wins: 0, round1_loses: 0, round1_draws: 0, round1_winrate: 0, round2_wins: 0, round2_loses: 0, round2_draws: 0, round2_winrate: 0}
-            };
-            if(fight['guild_id'] == guild_id) {
-                temp[fight[wizard_prefix + 'wizard_id']][mode]['round1' + IdToResult[fight['round1']]]++;
-                temp[fight[wizard_prefix + 'wizard_id']][mode]['round2' + IdToResult[fight['round2']]]++;
-            } else {
-                temp[fight[wizard_prefix + 'wizard_id']][mode]['round1' + IdToResultOpp[fight['round1']]]++;
-                temp[fight[wizard_prefix + 'wizard_id']][mode]['round2' + IdToResultOpp[fight['round2']]]++;
+        let enemy = getMatchEnemy(match, guild_id);
+        if (mode === 'attack') {
+            if (!excludeData.attack[enemy.guild_id]) {
+                excludeData.attack[enemy.guild_id] = {guild_id: enemy.guild_id, name: enemy.name};
             }
-            temp[fight[wizard_prefix + 'wizard_id']][mode]['round_count'] += 2;
-        });
+        } else {
+            if (!excludeData.defense[enemy.guild_id]) {
+                excludeData.defense[enemy.guild_id] = {guild_id: enemy.guild_id, name: enemy.name};
+            }
+        }
+        if(!excludedGuilds[mode][enemy.guild_id]) {
+            if (mode === 'attack')
+                attendanceMax += 6;
+
+            match.fights.forEach(fight => {
+                let wizard_prefix = (fight['guild_id'] == guild_id) ? '' : 'opp_';
+                if (!temp[fight[wizard_prefix + 'wizard_id']])
+                    temp[fight[wizard_prefix + 'wizard_id']] = {
+                        wizard_id: fight[wizard_prefix + 'wizard_id'],
+                        wizard_name: fight[wizard_prefix + 'wizard_name'],
+                        attack: {
+                            round_count: 0,
+                            win_count: 0,
+                            lose_count: 0,
+                            draw_count: 0,
+                            win_rate: 0,
+                            round1_wins: 0,
+                            round1_loses: 0,
+                            round1_draws: 0,
+                            round1_winrate: 0,
+                            round2_wins: 0,
+                            round2_loses: 0,
+                            round2_draws: 0,
+                            round2_winrate: 0
+                        },
+                        defense: {
+                            round_count: 0,
+                            win_count: 0,
+                            lose_count: 0,
+                            draw_count: 0,
+                            win_rate: 0,
+                            round1_wins: 0,
+                            round1_loses: 0,
+                            round1_draws: 0,
+                            round1_winrate: 0,
+                            round2_wins: 0,
+                            round2_loses: 0,
+                            round2_draws: 0,
+                            round2_winrate: 0
+                        }
+                    };
+                if (fight['guild_id'] == guild_id) {
+                    temp[fight[wizard_prefix + 'wizard_id']][mode]['round1' + IdToResult[fight['round1']]]++;
+                    temp[fight[wizard_prefix + 'wizard_id']][mode]['round2' + IdToResult[fight['round2']]]++;
+                } else {
+                    temp[fight[wizard_prefix + 'wizard_id']][mode]['round1' + IdToResultOpp[fight['round1']]]++;
+                    temp[fight[wizard_prefix + 'wizard_id']][mode]['round2' + IdToResultOpp[fight['round2']]]++;
+                }
+                temp[fight[wizard_prefix + 'wizard_id']][mode]['round_count'] += 2;
+            });
+        }
     });
 
     Object.keys(temp).forEach(wizard => {
@@ -169,7 +218,18 @@ function prepareMatchTableDataWeek(data) {
         });
         tableData.items.push(temp[wizard]);
     });
-    initMatchesTableWeek(tableData);
+
+    if(initTable) {
+        table = initMatchesTableWeek(tableData);
+        setExcludeData(excludeData);
+    } else {
+        table.clear();
+        table.rows.add(tableData.items).draw();
+    }
+}
+
+function getMatchEnemy(match, guild_id) {
+    return (match.guild.guild_id === guild_id) ? match.guild_opp : match.guild;
 }
 
 function getMatchModeByGuild(match, guild_id) {
@@ -180,8 +240,52 @@ function getMatchModeByGuild(match, guild_id) {
     }
 }
 
+function setExcludeData(excludeData) {
+    let modes = ['attack', 'defense'];
+
+    modes.forEach(mode => {
+        $('.settings-weekly-exclude-content.offense .col-lg-6').empty();
+        let mode_keys = Object.keys(excludeData[mode]);
+        let mode_break = Math.ceil(mode_keys.length / 2) || 0;
+        Object.keys(excludeData[mode]).forEach((guild_id, i) => {
+            let index = (i < mode_break) ? 0 : 1;
+            let checked = excludedGuilds[mode][guild_id] ? '' : 'checked="checked"';
+            $('.settings-weekly-exclude-content.' + mode + ' .col-lg-6').eq(index).append(
+                `<div class="checkbox">
+                <label>
+                    <input class="settings-weekly-exclude-option" data-type="${mode}" data-guild_id="${guild_id}" type="checkbox" ${checked}> ${excludeData[mode][guild_id].name}
+                </label>
+            </div>`);
+        });
+    });
+}
+
 $(function() {
+    // get excluded guild from storage
+    excludedGuilds = JSON.parse(localStorage.getItem('excludedGuilds')) || excludedGuilds;
+
     exeAjax({
         action: $('#container-data').data('action')
     });
+
+    $('.settings-weekly-exclude-content').on('change', '.settings-weekly-exclude-option', function (e) {
+        let type = $(this).data('type');
+        let guild_id = $(this).data('guild_id');
+        if(!$(this).prop('checked')) {
+            // add guild
+            excludedGuilds[type][guild_id] = true;
+        } else {
+            // remove guild
+            if(excludedGuilds[type][guild_id])
+                delete excludedGuilds[type][guild_id];
+        }
+
+        localStorage.setItem('excludedGuilds', JSON.stringify(excludedGuilds));
+        prepareMatchTableDataWeek(false);
+    });
+
+    $('.settings-weekly-toggle').on('click', function (e) {
+        $('.settings-weekly').slideToggle();
+    });
+
 });
