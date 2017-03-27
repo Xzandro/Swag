@@ -12,10 +12,9 @@ class FightsTable extends Table
     }
 
     public function checkAndSave($data) {
-        $alternativeFightID = ($data['log_type'] === 1) ? ($data['rid'] + 1) : ($data['rid'] - 1);
         $fight_query = $this->find('all')
-            ->where(['Fights.match_id' => $data['match_id'], 'Fights.fight_id' => $data['rid']])
-            ->orWhere(['Fights.match_id' => $data['match_id'], 'Fights.fight_id' => $alternativeFightID]);
+            ->where(['Fights.match_id' => $data['match_id'], 'Fights.wizard_id' => $data['wizard_id'], 'Fights.opp_wizard_id' => $data['opp_wizard_id']])
+            ->orWhere(['Fights.match_id' => $data['match_id'], 'Fights.wizard_id' => $data['opp_wizard_id'], 'Fights.opp_wizard_id' => $data['wizard_id']]);
 
         if($fight_query->isEmpty()) {
             $fight = $this->newEntity($data);
