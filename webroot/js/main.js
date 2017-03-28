@@ -72,10 +72,19 @@ function prepareMatches(data) {
 
     let match_keys = Object.keys(match_data);
     let options_week = (match_keys.length === 0) ? '<option value="0">No data.</option>' : '';
-    match_keys.forEach(week => {
+    let lastWeek = 0;
+    match_keys.forEach((week, i) => {
+        if(i === 0)
+            lastWeek = `${match_data[week]['year']}-${match_data[week]['week']}`;
         options_week += `<option value="${match_data[week]['year']}-${match_data[week]['week']}">Week ${match_data[week]['week']}, ${match_data[week]['start']} - ${match_data[week]['end']}</option>`;
     });
-    $('#settings-week').html(options_week).change();
+
+    let currentWeek = localStorage.getItem('week');
+    let currentYear = localStorage.getItem('year');
+
+    lastWeek = (currentWeek && currentYear) ? `${currentYear}-${currentWeek}` : lastWeek;
+
+    $('#settings-week').html(options_week).val(lastWeek).change();
 }
 
 function initMatches(data) {
