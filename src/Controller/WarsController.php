@@ -60,7 +60,7 @@ class WarsController extends AppController
         $week = $this->request->query('week') ? $this->request->query('week') : date('W');
 
         $dto = new Time();
-        $this->battle_start = $dto->setISODate($year, $week)->format('Y-m-d ');
+        $this->battle_start = $dto->setISODate($year, $week)->format('Y-m-d');
         $this->battle_end = $dto->modify('+7 days')->format('Y-m-d');
 
         $contain = ['Guild', 'GuildOpp', 'Fights' => function ($q) {
