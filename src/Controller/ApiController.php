@@ -46,6 +46,13 @@ class ApiController extends AppController
     public function matches($id = 0)
     {
         $this->loadModel('Matches');
+        $this->loadModel('Guilds');
+
+        $guild = $this->Guilds->get($id);
+
+        $timezoneToRegion = Configure::read('TimezoneToRegion');
+        $regionToTimezone = array_flip($timezoneToRegion);
+        $this->timezone = $regionToTimezone[$guild['region_id']];
 
         $limitWeek = [];
 
@@ -54,14 +61,14 @@ class ApiController extends AppController
         if($year && $week) {
             $dto = new Time();
             $this->battle_start = $dto->setISODate($year, $week)->format('Y-m-d');
-            $this->battle_end = $dto->modify('+6 days')->format('Y-m-d');
-            $limitWeek = ['Matches.last_fight >' => $this->battle_start, 'Matches.last_fight <' => $this->battle_end];
+            $this->battle_end = $dto->modify('+7 days')->format('Y-m-d');
+            $limitWeek = ['convert_tz(Matches.last_fight, "UTC", "' . $this->timezone . '") >' => $this->battle_start, 'convert_tz(Matches.last_fight, "UTC", "' . $this->timezone . '") <' => $this->battle_end];
         }
 
         $contain = ['Guild', 'GuildOpp'];
         if($this->request->query('fights')) {
             $contain = ['Guild', 'GuildOpp', 'Fights' => function ($q) {
-                return $q->where(['Fights.battle_end >' => $this->battle_start, 'Fights.battle_end <' => $this->battle_end]);
+                return $q->where(['convert_tz(Fights.battle_end, "UTC", "' . $this->timezone . '") >' => $this->battle_start, 'convert_tz(Fights.battle_end, "UTC", "' . $this->timezone . '") <' => $this->battle_end]);
             }];
         }
 
