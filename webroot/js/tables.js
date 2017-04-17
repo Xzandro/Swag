@@ -234,7 +234,7 @@ function prepareMatchTableDataWeek(initTable) {
                 let relevantWinrateRounds = (temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5));
                 temp[wizard][mode_item]['win_rate'] = relevantWinrateRounds / relevantRounds * 100 || 0;
             } else {
-                temp[wizard][mode_item]['win_rate'] = (temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5) / temp[wizard][mode_item]['round_count'] * 100) || 0;
+                temp[wizard][mode_item]['win_rate'] = ((temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5)) / temp[wizard][mode_item]['round_count'] * 100) || 0;
             }
 
             temp[wizard][mode_item]['round1_winrate'] = ((temp[wizard][mode_item]['round1_wins'] + (temp[wizard][mode_item]['round1_draws'] * 0.5)) / (temp[wizard][mode_item]['round_count'] / 2) * 100) || 0;
