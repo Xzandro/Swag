@@ -35,6 +35,18 @@ function initMatchesTable(data) {
             { "data": "round2_draws" },
             { "data": "round2_loses" },
             { "data": "round2_winrate" }
+        ],
+        "columnDefs": [
+            {
+                "render": function (data, type) {
+                    if (type === 'display') {
+                        return Math.round(data);
+                    } else {
+                        return data;
+                    }
+                },
+                "targets": [5, 9, 13]
+            }
         ]
     });
 }
@@ -70,6 +82,18 @@ function initMatchesTableWeek(data) {
             { "data": "defense.round2_loses" },
             { "data": "defense.round2_winrate" },
             { "data": "defense.win_rate" }
+        ],
+        "columnDefs": [
+            {
+                "render": function (data, type) {
+                    if (type === 'display') {
+                        return Math.round(data);
+                    } else {
+                        return data;
+                    }
+                },
+                "targets": [5, 9, 13, 14]
+            }
         ]
     });
 }
@@ -111,9 +135,9 @@ function prepareMatchTableDataSingle() {
         temp[wizard]['draw_count'] = (temp[wizard]['round1_draws'] +  temp[wizard]['round2_draws']);
         let relevantWinrateRounds = (temp[wizard]['win_count'] + (temp[wizard]['draw_count'] * 0.5));
         temp[wizard]['absent'] = absent;
-        temp[wizard]['win_rate'] = Math.round(relevantWinrateRounds / relevantRounds * 100) || 0;
-        temp[wizard]['round1_winrate'] = Math.round(temp[wizard]['round1_wins'] / (temp[wizard]['round_count'] / 2) * 100) || 0;
-        temp[wizard]['round2_winrate'] = Math.round(temp[wizard]['round2_wins'] / (temp[wizard]['round_count'] / 2) * 100) || 0;
+        temp[wizard]['win_rate'] = (relevantWinrateRounds / relevantRounds * 100) || 0;
+        temp[wizard]['round1_winrate'] = (temp[wizard]['round1_wins'] / (temp[wizard]['round_count'] / 2) * 100) || 0;
+        temp[wizard]['round2_winrate'] = (temp[wizard]['round2_wins'] / (temp[wizard]['round_count'] / 2) * 100) || 0;
         tableData.items.push(temp[wizard]);
     });
     table = initMatchesTable(tableData);
@@ -208,13 +232,13 @@ function prepareMatchTableDataWeek(initTable) {
             temp[wizard][mode_item]['draw_count'] = (temp[wizard][mode_item]['round1_draws'] +  temp[wizard][mode_item]['round2_draws']);
             if(mode_item === 'attack') {
                 let relevantWinrateRounds = (temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5));
-                temp[wizard][mode_item]['win_rate'] = Math.round(relevantWinrateRounds / relevantRounds * 100) || 0;
+                temp[wizard][mode_item]['win_rate'] = relevantWinrateRounds / relevantRounds * 100 || 0;
             } else {
-                temp[wizard][mode_item]['win_rate'] = Math.round((temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5)) / temp[wizard][mode_item]['round_count'] * 100) || 0;
+                temp[wizard][mode_item]['win_rate'] = (temp[wizard][mode_item]['win_count'] + (temp[wizard][mode_item]['draw_count'] * 0.5) / temp[wizard][mode_item]['round_count'] * 100) || 0;
             }
 
-            temp[wizard][mode_item]['round1_winrate'] = Math.round((temp[wizard][mode_item]['round1_wins'] + (temp[wizard][mode_item]['round1_draws'] * 0.5)) / (temp[wizard][mode_item]['round_count'] / 2) * 100) || 0;
-            temp[wizard][mode_item]['round2_winrate'] = Math.round((temp[wizard][mode_item]['round2_wins'] + (temp[wizard][mode_item]['round2_draws'] * 0.5)) / (temp[wizard][mode_item]['round_count'] / 2) * 100) || 0;
+            temp[wizard][mode_item]['round1_winrate'] = ((temp[wizard][mode_item]['round1_wins'] + (temp[wizard][mode_item]['round1_draws'] * 0.5)) / (temp[wizard][mode_item]['round_count'] / 2) * 100) || 0;
+            temp[wizard][mode_item]['round2_winrate'] = ((temp[wizard][mode_item]['round2_wins'] + (temp[wizard][mode_item]['round2_draws'] * 0.5)) / (temp[wizard][mode_item]['round_count'] / 2) * 100) || 0;
         });
         tableData.items.push(temp[wizard]);
     });
