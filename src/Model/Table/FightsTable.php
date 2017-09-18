@@ -18,7 +18,7 @@ class FightsTable extends Table
 
         if($fight_query->isEmpty()) {
             $fight = $this->newEntity($data);
-            $fight->fight_id = $data['rid'];
+            $fight->origin_id = $data['rid'];
             $fight->round1 = $data['result'][0];
             $fight->round2 = $data['result'][1];
 

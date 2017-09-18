@@ -29,12 +29,11 @@ function handleData(data, args) {
             });
             $('#settings-region').html(options_region).val(localStorage.getItem('region') || 0).change();
             break;
-        case 'setguilds':
-            let options_guild = '';
-            data['guilds'].forEach(guild => {
-                options_guild += `<option value="${guild.guild_id}">${guild.name}</option>`;
-            });
-            $('#settings-guild').html(options_guild).val(localStorage.getItem('guild')|| 0).change();
+        case 'setguild':
+            if(!data.guild) { return; }
+
+            var newOption = new Option(data.guild.name, data.guild.guild_id, true, true);
+            $('#settings-guild').append(newOption).trigger('change');
             break;
         case 'getmatches':
             prepareMatches(data);
@@ -166,13 +165,21 @@ $(function() {
     });
 
     $('#settings-guild').select2({
-        placeholder: 'Select guild'
+        placeholder: 'Select guild',
+        ajax: {
+            url: function (params) {
+                return '/api/guildsearch/' + (localStorage.getItem('region') || 0);
+            },
+            dataType: 'json',
+            delay: 150,
+            minimumInputLength: 1
+        }
     });
 
     $('#settings-region').on('change', function (e) {
         exeAjax({
-            url: '/api/guilds/' + (localStorage.getItem('region') || 0),
-            action: 'setguilds'
+            url: '/api/guild/' + (localStorage.getItem('guild') || 0),
+            action: 'setguild'
         });
     });
 

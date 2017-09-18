@@ -47,7 +47,7 @@ class ApiController extends AppController
     {
         $this->loadModel('Matches');
         $this->loadModel('Guilds');
-
+        
         $guild = $this->Guilds->get($id);
 
         $timezoneToRegion = Configure::read('TimezoneToRegion');
@@ -114,6 +114,16 @@ class ApiController extends AppController
         $this->set(compact('regions'));
     }
 
+    public function guild($id = 0)
+    {
+        if($id == 0) {
+            return;
+        }
+        $this->loadModel('Guilds');
+        $guild = $this->Guilds->get($id);
+        $this->set(compact('guild'));
+    }
+
     public function guilds($region = 0)
     {
         $this->loadModel('Guilds');
@@ -135,6 +145,24 @@ class ApiController extends AppController
         ]);
         $guilds = $query->all();
         $this->set(compact('guilds'));
+    }
+
+    public function guildsearch($region = 0)
+    {
+        $this->loadModel('Guilds');
+        $name = $this->request->query('q');
+        $query = $this->Guilds->find('list', [
+            'keyField' => 'guild_id',
+            'valueField' => function ($guild) {
+                return array('id' => $guild->guild_id, 'text' => $guild->name);
+            },
+            'conditions' => ['Guilds.name LIKE' => '%' . $name . '%', 'Guilds.region_id' => $region],
+            'fields' => ['Guilds.name', 'Guilds.guild_id'],
+            'order' =>['Guilds.name' => 'ASC'],
+            'limit' => 20
+        ]);
+        $results = $query->toList();
+        $this->set(compact('results'));
     }
 }
 ?>

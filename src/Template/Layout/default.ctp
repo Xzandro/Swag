@@ -40,6 +40,7 @@
 </head>
 <body>
     <?= $this->Flash->render() ?>
+    <div class="alert alert-warning" role="alert"><div class="container"><strong>Database wipe:</strong> The current system has many limitations which means that there is a need for a bigger rewrite of some components. As the result I will wipe the database completely on Sunday (01.10.2017). Make sure you save the data you need until then (eg.: via screenshots etc.).</div></div>
     <header>
         <div class="container">
         <?php echo $this->Html->link(

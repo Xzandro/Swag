@@ -56,18 +56,22 @@ class DataController extends AppController
 
         if(isset($data['battle_log_list_group'][0]['battle_log_list'][0])) {
             $fight = $data['battle_log_list_group'][0]['battle_log_list'][0];
-            $guild = ['guild_id' => $fight['guild_id'], 'name' => $fight['guild_name'], 'tzone' => $data['tzone']];
-            $this->Guilds->checkAndSave($guild);
+            $guild = ['origin_id' => $fight['guild_id'], 'name' => $fight['guild_name'], 'tzone' => $data['tzone']];
+            $guild_id = $this->Guilds->checkAndSave($guild);
         }
 
         foreach($data['battle_log_list_group'] as $match) {
             //check opponent guilds
             $opponent = $match['opp_guild_info'];
             $opponent['tzone'] = $data['tzone'];
-            $this->Guilds->checkAndSave($opponent);
+            $opponent['origin_id'] = $opponent['guild_id'];
+            unset($opponent['guild_id']);
+            $opp_guild_id = $this->Guilds->checkAndSave($opponent);
             $i = 0;
-            foreach($match['battle_log_list'] as $fight) {
+            foreach($match['battle_log_list'] as &$fight) {
                 //check war (only once)
+                $fight['guild_id'] = $guild_id;
+                $fight['opp_guild_id'] = $opp_guild_id;
                 if ($i === 0) {
                     $match_data = $fight;
                     $match_data['last_fight'] = $fight['battle_end'];
@@ -89,12 +93,15 @@ class DataController extends AppController
         if(!isset($data['battle_log_list']))
             return;
 
-        foreach($data['battle_log_list'] as $fight) {
-            $guild = ['guild_id' => $fight['guild_id'], 'name' => $fight['guild_name'], 'tzone' => $data['tzone']];
-            $this->Guilds->checkAndSave($guild);
+        foreach($data['battle_log_list'] as &$fight) {
+            $guild = ['origin_id' => $fight['guild_id'], 'name' => $fight['guild_name'], 'tzone' => $data['tzone']];
+            $guild_id = $this->Guilds->checkAndSave($guild);
 
-            $guild_opp = ['guild_id' => $fight['opp_guild_id'], 'name' => $fight['opp_guild_name'], 'tzone' => $data['tzone']];
-            $this->Guilds->checkAndSave($guild_opp);
+            $guild_opp = ['origin_id' => $fight['opp_guild_id'], 'name' => $fight['opp_guild_name'], 'tzone' => $data['tzone']];
+            $opp_guild_id = $this->Guilds->checkAndSave($guild_opp);
+
+            $fight['guild_id'] = $guild_id;
+            $fight['opp_guild_id'] = $opp_guild_id;
 
             $match_data = $fight;
             $match_data['last_fight'] = $fight['battle_end'];

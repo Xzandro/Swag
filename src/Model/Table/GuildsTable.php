@@ -23,11 +23,24 @@ class GuildsTable extends Table
 
     public function checkAndSave($data) {
         $timezoneToRegion = Configure::read('TimezoneToRegion');
-        if(!$this->exists(['guild_id' => $data['guild_id']])) {
-            $guild = $this->newEntity($data);
-            $guild->region_id = $timezoneToRegion[$data['tzone']];
+        $region_id = $timezoneToRegion[$data['tzone']];
 
-            $this->save($guild);
+        $guild_query = $this->find('all', [
+            'conditions' => ['origin_id' => $data['origin_id'], 'region_id' => $region_id]
+        ]);
+
+        $row = $guild_query->first();
+
+        if($guild_query->isEmpty()) {
+            $guild = $this->newEntity($data);
+            $guild->region_id = $region_id;
+
+            if($this->save($guild)) {
+                return $guild->guild_id;
+            }
+            
+        } else {
+            return $row['guild_id'];
         }
     }
 }
