@@ -170,10 +170,9 @@ $(function() {
             url: function (params) {
                 return '/api/guildsearch/' + (localStorage.getItem('region') || 0);
             },
-            dataType: 'json',
-            delay: 150,
-            minimumInputLength: 1
-        }
+            dataType: 'json'
+        },
+        minimumInputLength: 1
     });
 
     $('#settings-region').on('change', function (e) {
