@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use Cake\Event\Event;
 use Cake\I18n\Time;
+use Cake\Http\Response;
+use Cake\Core\Configure;
 
 class DataController extends AppController
 {
@@ -122,5 +124,17 @@ class DataController extends AppController
             $this->Fights->checkAndSave($fight);
         }
     }
+
+    public function purge()
+    {
+        $purgeToken = Configure::read('purgeToken');
+        $token = $this->request->query('token');
+        
+
+        if(!$token || $token != $purgeToken) {
+            $this->response->statusCode(403);
+        }
+    }
+    
 }
 ?>

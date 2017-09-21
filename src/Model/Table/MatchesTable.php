@@ -19,6 +19,7 @@ class MatchesTable extends Table
             'className' => 'Guilds'
         ]);
         $this->hasMany('Fights', [
+            'dependent' => true
             'sort' => ['Fights.battle_end' => 'DESC']
         ]);
     }

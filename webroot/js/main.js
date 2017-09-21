@@ -172,6 +172,7 @@ $(function() {
             },
             dataType: 'json'
         },
+        delay: 150,
         minimumInputLength: 1
     });
 

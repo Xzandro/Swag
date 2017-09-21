@@ -159,7 +159,7 @@ class ApiController extends AppController
             'conditions' => ['Guilds.name LIKE' => '%' . $name . '%', 'Guilds.region_id' => $region],
             'fields' => ['Guilds.name', 'Guilds.guild_id'],
             'order' =>['Guilds.name' => 'ASC'],
-            'limit' => 20
+            'limit' => 50
         ]);
         $results = $query->toList();
         $this->set(compact('results'));
