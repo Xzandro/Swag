@@ -40,7 +40,7 @@
 </head>
 <body>
     <?= $this->Flash->render() ?>
-    <div class="alert alert-warning" role="alert"><div class="container"><strong>Database wipe:</strong> The current system has many limitations which means that there is a need for a bigger rewrite of some components. As the result I will wipe the database completely on Sunday (01.10.2017). Make sure you save the data you need until then (eg.: via screenshots etc.).</div></div>
+    <div class="alert alert-info" role="alert"><div class="container">Database wipe done! Dont forget to reselect your guild next week. The ID's changed. Besides general bugfixes the guild search should be waaaay faster and the data is more consistent so I hope there is no need for a second wipe necessary.</div></div>
     <header>
         <div class="container">
         <?php echo $this->Html->link(

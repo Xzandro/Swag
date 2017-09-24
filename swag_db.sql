@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.15.8
--- https://www.phpmyadmin.net
+-- version 4.7.4
+-- https://www.phpmyadmin.net/
 --
 -- Host: sql462.your-server.de
--- Erstellungszeit: 02. Feb 2017 um 10:34
+-- Erstellungszeit: 24. Sep 2017 um 07:34
 -- Server-Version: 5.6.35-1
--- PHP-Version: 5.3.10-1ubuntu3.25
+-- PHP-Version: 7.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -26,8 +28,9 @@ SET time_zone = "+00:00";
 -- Tabellenstruktur für Tabelle `fights`
 --
 
-CREATE TABLE IF NOT EXISTS `fights` (
+CREATE TABLE `fights` (
   `fight_id` int(11) NOT NULL,
+  `origin_id` int(11) NOT NULL,
   `guild_point_var` int(11) NOT NULL,
   `match_id` int(11) NOT NULL,
   `round1` int(11) NOT NULL,
@@ -53,8 +56,9 @@ CREATE TABLE IF NOT EXISTS `fights` (
 -- Tabellenstruktur für Tabelle `guilds`
 --
 
-CREATE TABLE IF NOT EXISTS `guilds` (
+CREATE TABLE `guilds` (
   `guild_id` int(11) NOT NULL,
+  `origin_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `region_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -65,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `guilds` (
 -- Tabellenstruktur für Tabelle `matches`
 --
 
-CREATE TABLE IF NOT EXISTS `matches` (
+CREATE TABLE `matches` (
   `match_id` int(11) NOT NULL,
   `guild_id` int(11) NOT NULL,
   `opp_guild_id` int(11) NOT NULL,
@@ -79,10 +83,20 @@ CREATE TABLE IF NOT EXISTS `matches` (
 -- Tabellenstruktur für Tabelle `regions`
 --
 
-CREATE TABLE IF NOT EXISTS `regions` (
+CREATE TABLE `regions` (
   `region_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Daten für Tabelle `regions`
+--
+
+INSERT INTO `regions` (`region_id`, `name`) VALUES
+(1, 'Global'),
+(2, 'Europe'),
+(3, 'Korea'),
+(4, 'Asia');
 
 --
 -- Indizes der exportierten Tabellen
@@ -92,7 +106,10 @@ CREATE TABLE IF NOT EXISTS `regions` (
 -- Indizes für die Tabelle `fights`
 --
 ALTER TABLE `fights`
-  ADD PRIMARY KEY (`fight_id`);
+  ADD PRIMARY KEY (`fight_id`),
+  ADD KEY `match_id` (`match_id`),
+  ADD KEY `wizard_id` (`wizard_id`),
+  ADD KEY `opp_wizard_id` (`opp_wizard_id`);
 
 --
 -- Indizes für die Tabelle `guilds`
@@ -117,10 +134,24 @@ ALTER TABLE `regions`
 --
 
 --
+-- AUTO_INCREMENT für Tabelle `fights`
+--
+ALTER TABLE `fights`
+  MODIFY `fight_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `guilds`
+--
+ALTER TABLE `guilds`
+  MODIFY `guild_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `regions`
 --
 ALTER TABLE `regions`
-  MODIFY `region_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `region_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
