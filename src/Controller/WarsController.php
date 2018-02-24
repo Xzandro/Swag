@@ -77,8 +77,9 @@ class WarsController extends AppController
             $match['last_fight'] = Time::parse($match['last_fight'])->i18nFormat('yyyy-MM-dd HH:mm:ss', $this->timezone);
         }
 
+        $guildId = $id;
         $guildname = $matches[0]['guild_id'] == $id ? $matches[0]['guild']['name'] : $matches[0]['guild_opp']['name'];
-        $this->set(compact('matches', 'guildname'));
+        $this->set(compact('matches', 'guildname', 'guildId'));
     }
 }
 ?>

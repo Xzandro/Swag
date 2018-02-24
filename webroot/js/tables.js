@@ -147,7 +147,7 @@ function prepareMatchTableDataWeek(initTable) {
     let data = JSON.parse(JSON.stringify(rawData));
     let temp = {};
     let tableData = {items: []};
-    let guild_id = Number(localStorage.getItem('guild')) || 0;
+    let guild_id = Number(data['guildId']) || 0;
     let own = (data['matches'][0]['guild_id'] == guild_id) ? data['matches'][0]['guild'] : data['matches'][0]['guild_opp'];
     tableData.name = own.name;
     let date = data['matches'][0]['last_fight'];
