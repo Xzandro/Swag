@@ -129,10 +129,20 @@ class DataController extends AppController
     {
         $purgeToken = Configure::read('purgeToken');
         $token = $this->request->query('token');
-        
 
         if(!$token || $token != $purgeToken) {
             $this->response->statusCode(403);
+            return;
+        }
+
+        $this->loadModel('Matches');
+        $query = $this->Matches->find('all', [
+            'conditions' => ['last_fight <' => new Time('6 months ago')]
+        ]);
+        $data = $query->all();
+
+        foreach ($data as $match) {
+            $this->Matches->delete($match);
         }
     }
     
